@@ -1,0 +1,21 @@
+# Ignore build artifacts and OS files
+WinMain.exe
+*.obj
+*.o
+*.pdb
+*.ilk
+*.log
+*.suo
+*.user
+*.ncb
+*.sdf
+*.opensdf
+*.VC.db
+*.VC.opendb
+.DS_Store
+Thumbs.db
+*.vcxproj*
+*.sln
+*.ipch
+*.cache
+*.vs/
