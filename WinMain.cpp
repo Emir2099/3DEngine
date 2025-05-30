@@ -1,6 +1,7 @@
 #define UNICODE
 #define _UNICODE
 #include <Windows.h>
+#include <sstream>
 
 LRESULT CALLBACK WndProc( HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
@@ -21,6 +22,20 @@ LRESULT CALLBACK WndProc( HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
                 SetWindowText( hWnd, L"No Respect");
             }
             break;
+        case WM_CHAR:
+            {
+                static std::wstring title;
+                title.push_back((wchar_t)wParam);  // append the character to the title
+                SetWindowText( hWnd, title.c_str() );  // set the window title to the current string
+            }
+            break;
+        case WM_LBUTTONDOWN:
+            {
+                const POINTS pt = MAKEPOINTS(lParam);  // get the mouse position
+                std::wostringstream oss;  // use wostringstream to format the output beacuse ostringstream is not wide character aware
+                oss << L"(" << pt.x << L"," << pt.y << L")";
+                SetWindowText(hWnd, oss.str().c_str());  // set the window title to the cursor position
+            }
     }
     return DefWindowProc(hWnd, msg, wParam, lParam);
 }
