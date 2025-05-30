@@ -9,6 +9,18 @@ LRESULT CALLBACK WndProc( HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
         case WM_CLOSE:
             PostQuitMessage(22);  // post a quit message to the message queue
             break; 
+        case WM_KEYDOWN:
+            if ( wParam == 'F' )
+            {
+                SetWindowText( hWnd, L"Respects" );
+            }   
+            break;
+        case WM_KEYUP:
+            if ( wParam == 'F' )
+            {
+                SetWindowText( hWnd, L"No Respect");
+            }
+            break;
     }
     return DefWindowProc(hWnd, msg, wParam, lParam);
 }
