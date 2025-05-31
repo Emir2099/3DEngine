@@ -33,5 +33,7 @@ private:
     HWND hWnd_; // Handle to this window
     HINSTANCE hInstance_; // Handle to the application instance
     std::wstring className_; // The name of the window class, using std::wstring for easier management
+    int width;
+	int height;
 };
 // --- End Window Class Definition ---

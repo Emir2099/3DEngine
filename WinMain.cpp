@@ -3,6 +3,7 @@
 #include <Windows.h> // Standard Windows header
 #include "ExceptionHandler.h" // For CATCH_AND_LOG macros
 #include "Window.h"           // Definition of our Window class
+#include <sstream>
 
 // Main application entry point
 int CALLBACK WinMain(
@@ -82,6 +83,26 @@ int CALLBACK WinMain(
             //         SetWindowText(wnd.GetHwnd(), oss.str().c_str());
             //     }
             // }
+
+            while( !wnd.mouse.IsEmpty() )
+			    {
+				const auto e = wnd.mouse.Read();
+				switch( e.GetType() )
+				{
+                case Mouse::Event::Type::Leave:
+                    SetWindowText(wnd.GetHwnd(), L"Gone!");
+                    break;
+				case Mouse::Event::Type::Move:
+                    {
+                        std::wostringstream oss; // Use wostringstream for wide strings
+                        oss << L"Mouse Position: (" << e.GetPosX() << L"," << e.GetPosY() << L")";
+                        SetWindowText(wnd.GetHwnd(), oss.str().c_str());
+                    }
+					break;
+				}
+			}
+
+
             }
         }
         

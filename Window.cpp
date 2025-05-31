@@ -8,9 +8,9 @@
 // --- Window Class Implementation ---
 
 // Constructor: Registers class, creates window
-Window::Window(HINSTANCE hInstance, const std::wstring& windowTitle, const wchar_t* windowClassName, int width, int height)
-    : hInstance_(hInstance), className_(windowClassName), hWnd_(nullptr) {
-    WNDCLASSEXW wc = {0}; // Use WNDCLASSEXW for Unicode
+Window::Window(HINSTANCE hInstance, const std::wstring& windowTitle, const wchar_t* windowClassName, int width_param, int height_param)
+    : hInstance_(hInstance), className_(windowClassName), hWnd_(nullptr), width(width_param), height(height_param) { // Initialize member variables width and height
+    WNDCLASSEXW wc = {0}; 
     wc.cbSize = sizeof(WNDCLASSEXW);
     wc.style = CS_OWNDC;
     wc.lpfnWndProc = StaticWndProc;
@@ -35,7 +35,7 @@ Window::Window(HINSTANCE hInstance, const std::wstring& windowTitle, const wchar
         WS_OVERLAPPEDWINDOW,            // Window style
 
         // Size and position
-        CW_USEDEFAULT, CW_USEDEFAULT, width, height,
+        CW_USEDEFAULT, CW_USEDEFAULT, this->width, this->height, // Use member variables for CreateWindowExW
 
         NULL,       // Parent window    
         NULL,       // Menu
@@ -75,8 +75,8 @@ LRESULT CALLBACK Window::StaticWndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARA
     if (msg == WM_NCCREATE) {
         CREATESTRUCTW* pCreate = reinterpret_cast<CREATESTRUCTW*>(lParam); // Use CREATESTRUCTW
         pWnd = reinterpret_cast<Window*>(pCreate->lpCreateParams);
-        SetWindowLongPtrW(hWnd, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(pWnd)); // Use SetWindowLongPtrW
-        pWnd->hWnd_ = hWnd;
+        SetWindowLongPtrW(hWnd, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(pWnd)); 
+        pWnd->hWnd_ = hWnd; // Ensure hWnd_ is set early
     } else {
         pWnd = reinterpret_cast<Window*>(GetWindowLongPtrW(hWnd, GWLP_USERDATA)); // Use GetWindowLongPtrW
     }
@@ -148,41 +148,85 @@ LRESULT Window::HandleMessage(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
         //     }
         //     break; 
         
-        case WM_KILLFOCUS: // Moved this case down to avoid interfering with key/mouse messages if it lacks a break
+        case WM_KILLFOCUS: // Moved this case down ro avoid interference with key/mouse messages if it lacks a break
             kbd.ClearState(); // Clear keyboard state when the window loses focus
+            if (GetCapture() == hWnd) { // If this window has mouse capture
+                ReleaseCapture();       // Release it
+            }
             break; 
-
-
 
         /************* MOUSE MESSAGES ****************/
 	    case WM_MOUSEMOVE:
 	    {
 		    const POINTS pt = MAKEPOINTS( lParam );
-		    mouse.OnMouseMove( pt.x,pt.y );
+            // Check if mouse is within the client area
+            if( pt.x >= 0 && pt.x < width && pt.y >= 0 && pt.y < height )
+            {
+                mouse.OnMouseMove( pt.x,pt.y );
+                if( !mouse.IsInWindow() )
+                {
+                    mouse.OnMouseEnter();
+                    // Request WM_MOUSELEAVE when mouse leaves client area
+                    TRACKMOUSEEVENT tme = {}; // Initialize to zero
+                    tme.cbSize = sizeof(TRACKMOUSEEVENT);
+                    tme.dwFlags = TME_LEAVE;
+                    tme.hwndTrack = hWnd;
+                    if (!TrackMouseEvent(&tme)) {
+                        // Log error if TrackMouseEvent fails
+                        LOG_ERROR_MESSAGE(L"TrackMouseEvent failed in WM_MOUSEMOVE");
+                    }
+                }
+            }
+            // Mouse is outside client area
+            else
+            {
+                // If dragging (LEFT button is pressed AND we have capture)
+                if( (wParam & MK_LBUTTON) && GetCapture() == hWnd )
+                {
+                    mouse.OnMouseMove( pt.x,pt.y );
+                }
+                // If not dragging but mouse is outside, and we thought it was in
+                // This is handled by WM_MOUSELEAVE.
+            }
             break; 
 	    }
+        case WM_MOUSELEAVE: // Handle this message
+        {
+            if (mouse.IsInWindow()) { // Check before calling OnMouseLeave
+                 mouse.OnMouseLeave();
+            }
+            break;
+        }
 	    case WM_LBUTTONDOWN:
 	    {
 		    const POINTS pt = MAKEPOINTS( lParam );
 		    mouse.OnLeftPressed( pt.x,pt.y );
+            SetCapture(hWnd); // Capture the mouse for left button drag
 		    break;
 	    }
 	    case WM_RBUTTONDOWN:
 	    {
 		    const POINTS pt = MAKEPOINTS( lParam );
 		    mouse.OnRightPressed( pt.x,pt.y );
+            SetCapture(hWnd); // Capture the mouse (if you want right-drag)
 		    break;
 	    }
 	    case WM_LBUTTONUP:
 	    {
 		    const POINTS pt = MAKEPOINTS( lParam );
 		    mouse.OnLeftReleased( pt.x,pt.y );
+            if (GetCapture() == hWnd) { // Only release if we have capture
+                ReleaseCapture();
+            }
 		    break;
 	    }
 	    case WM_RBUTTONUP:
 	    {
 		    const POINTS pt = MAKEPOINTS( lParam );
 		    mouse.OnRightReleased( pt.x,pt.y );
+            if (GetCapture() == hWnd) { // Only release if we have capture
+                ReleaseCapture();
+            }
 		    break;
 	    }
 	    case WM_MOUSEWHEEL:
@@ -200,7 +244,7 @@ LRESULT Window::HandleMessage(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 	    }
 	    /************** END MOUSE MESSAGES **************/
         default:
-            return DefWindowProcW(hWnd, msg, wParam, lParam); // Use DefWindowProcW
+            return DefWindowProcW(hWnd, msg, wParam, lParam); 
     }
-    return 0; // Default return for handled messages
+    return 0; 
 }
