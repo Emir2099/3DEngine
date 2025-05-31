@@ -75,12 +75,15 @@ int CALLBACK WinMain(
         wc.cbClsExtra = 0;
         wc.cbWndExtra = 0;
         wc.hInstance = hInstance;
-        wc.hIcon = nullptr;  // no icon
+        // Load the standard application icon
+        wc.hIcon = LoadIconW(NULL, IDI_APPLICATION);
+        wc.hIconSm = LoadIconW(NULL, IDI_APPLICATION);
+        // wc.hIcon = nullptr;  // if want no icon
         wc.hCursor = nullptr;  // no cursor
         wc.hbrBackground = nullptr;  // no background
         wc.lpszMenuName = nullptr;  // no menu
         wc.lpszClassName = pClassName;  // class name
-        wc.hIconSm = nullptr;  // no small icon
+        // wc.hIconSm = nullptr;  // if want no small icon
         if (!RegisterClassEx( &wc )) // register the window class
         {
             throw std::runtime_error("Failed to register window class");
