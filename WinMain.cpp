@@ -69,6 +69,19 @@ int CALLBACK WinMain(
 			    // {
 				//     MessageBox( nullptr,L"Something Happon!",L"The alt key was pressed",MB_OK | MB_ICONEXCLAMATION );
 			    // }
+
+
+                // Test case to process mouse events: Read mouse events and update window title with mouse position
+			// while( !wnd.mouse.IsEmpty() )
+			// {
+            //     const auto e = wnd.mouse.Read();
+            //     if( e.GetType() == Mouse::Event::Type::Move )
+            //     {
+            //         std::wostringstream oss;
+            //         oss << L"Mouse Position: (" << e.GetPosX() << L"," << e.GetPosY() << L")";
+            //         SetWindowText(wnd.GetHwnd(), oss.str().c_str());
+            //     }
+            // }
             }
         }
         

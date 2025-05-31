@@ -93,7 +93,7 @@ LRESULT Window::HandleMessage(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
         case WM_DESTROY:
             PostQuitMessage(0);
             return 0;
-        
+        // KEYBOARD MESSAGES
         case WM_KEYDOWN:
             if( !(lParam & 0x40000000) || kbd.AutorepeatIsEnabled())   // filter autorepeat
             {
@@ -132,26 +132,73 @@ LRESULT Window::HandleMessage(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
                 kbd.OnKeyReleased(static_cast<unsigned char>(wParam));
             }
             break;
-                
+
         case WM_CHAR:
             // Pass char events to the Keyboard class
             kbd.OnChar(static_cast<unsigned char>(wParam));
             break; 
 
         // Test: Display mouse coordinates in window title on left button down
-        case WM_LBUTTONDOWN:
-            { // New scope for variables
-                const POINTS pt = MAKEPOINTS(lParam); // Extract x and y coordinates from lParam
-                std::wostringstream oss; // Use std::wostringstream for Unicode strings
-                oss << L"Mouse Clicked at (" << pt.x << L", " << pt.y << L")"; // Format the string
-                SetWindowTextW(hWnd, oss.str().c_str()); // Set the window title with the coordinates
-            }
-            break; 
+        // case WM_LBUTTONDOWN:
+        //     { // New scope for variables
+        //         const POINTS pt = MAKEPOINTS(lParam); // Extract x and y coordinates from lParam
+        //         std::wostringstream oss; // Use std::wostringstream for Unicode strings
+        //         oss << L"Mouse Clicked at (" << pt.x << L", " << pt.y << L")"; // Format the string
+        //         SetWindowTextW(hWnd, oss.str().c_str()); // Set the window title with the coordinates
+        //     }
+        //     break; 
         
         case WM_KILLFOCUS: // Moved this case down to avoid interfering with key/mouse messages if it lacks a break
             kbd.ClearState(); // Clear keyboard state when the window loses focus
             break; 
 
+
+
+        /************* MOUSE MESSAGES ****************/
+	    case WM_MOUSEMOVE:
+	    {
+		    const POINTS pt = MAKEPOINTS( lParam );
+		    mouse.OnMouseMove( pt.x,pt.y );
+            break; 
+	    }
+	    case WM_LBUTTONDOWN:
+	    {
+		    const POINTS pt = MAKEPOINTS( lParam );
+		    mouse.OnLeftPressed( pt.x,pt.y );
+		    break;
+	    }
+	    case WM_RBUTTONDOWN:
+	    {
+		    const POINTS pt = MAKEPOINTS( lParam );
+		    mouse.OnRightPressed( pt.x,pt.y );
+		    break;
+	    }
+	    case WM_LBUTTONUP:
+	    {
+		    const POINTS pt = MAKEPOINTS( lParam );
+		    mouse.OnLeftReleased( pt.x,pt.y );
+		    break;
+	    }
+	    case WM_RBUTTONUP:
+	    {
+		    const POINTS pt = MAKEPOINTS( lParam );
+		    mouse.OnRightReleased( pt.x,pt.y );
+		    break;
+	    }
+	    case WM_MOUSEWHEEL:
+	    {
+		    const POINTS pt = MAKEPOINTS( lParam );
+		    if( GET_WHEEL_DELTA_WPARAM( wParam ) > 0 )
+		    {
+		    	mouse.OnWheelUp( pt.x,pt.y );
+		    }
+		    else if( GET_WHEEL_DELTA_WPARAM( wParam ) < 0 )
+		    {
+			    mouse.OnWheelDown( pt.x,pt.y );
+		    }
+		    break;
+	    }
+	    /************** END MOUSE MESSAGES **************/
         default:
             return DefWindowProcW(hWnd, msg, wParam, lParam); // Use DefWindowProcW
     }

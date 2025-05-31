@@ -3,13 +3,14 @@
 #include <windows.h> // Ensure this is first
 #include <string>    // Required for std::wstring
 #include "Keyboard.h" // The Window class uses a Keyboard object
+#include "Mouse.h"    // The Window class uses a Mouse object
 
 // --- Window Class Definition ---
 // For better organization in larger projects, this class could be in Window.h and Window.cpp
 class Window {
 public:
-    Keyboard kbd; // Public keyboard object as requested
-
+    Keyboard kbd; // Public keyboard object 
+    Mouse mouse; // Public mouse object 
     // Constructor: Registers class, creates window
     Window(HINSTANCE hInstance, const std::wstring& className, const wchar_t* windowTitle, int width, int height);
     
