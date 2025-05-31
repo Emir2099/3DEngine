@@ -84,24 +84,52 @@ int CALLBACK WinMain(
             //     }
             // }
 
-            while( !wnd.mouse.IsEmpty() )
-			    {
-				const auto e = wnd.mouse.Read();
-				switch( e.GetType() )
-				{
-                case Mouse::Event::Type::Leave:
-                    SetWindowText(wnd.GetHwnd(), L"Gone!");
-                    break;
-				case Mouse::Event::Type::Move:
-                    {
-                        std::wostringstream oss; // Use wostringstream for wide strings
-                        oss << L"Mouse Position: (" << e.GetPosX() << L"," << e.GetPosY() << L")";
-                        SetWindowText(wnd.GetHwnd(), oss.str().c_str());
-                    }
-					break;
-				}
-			}
 
+            // Test case for drag 
+            // while( !wnd.mouse.IsEmpty() )
+			//     {
+			// 	const auto e = wnd.mouse.Read();
+			// 	switch( e.GetType() )
+			// 	{
+            //     case Mouse::Event::Type::Leave:
+            //         SetWindowText(wnd.GetHwnd(), L"Gone!");
+            //         break;
+			// 	case Mouse::Event::Type::Move:
+            //         {
+            //             std::wostringstream oss; // Use wostringstream for wide strings
+            //             oss << L"Mouse Position: (" << e.GetPosX() << L"," << e.GetPosY() << L")";
+            //             SetWindowText(wnd.GetHwnd(), oss.str().c_str());
+            //         }
+			// 		break;
+			// 	}
+			// }
+
+
+            // Test case for wheel scroll events
+            // static int i = 0;
+			// while( !wnd.mouse.IsEmpty() )
+			// {
+			// 	const auto e = wnd.mouse.Read();
+			// 	switch( e.GetType() )
+			// 	{
+			// 	case Mouse::Event::Type::WheelUp:
+			// 		i++;
+			// 		{
+			// 			std::wostringstream oss;
+			// 			oss << L"Up: " << i;
+            //             SetWindowText(wnd.GetHwnd(), oss.str().c_str());
+			// 		}
+			// 		break;
+			// 	case Mouse::Event::Type::WheelDown:
+			// 		i--;
+			// 		{
+			// 			std::wostringstream oss;
+			// 			oss << "Down: " << i;
+            //             SetWindowText(wnd.GetHwnd(), oss.str().c_str());					
+            //         }
+			// 		break;
+			// 	}
+			// }
 
             }
         }
