@@ -1,6 +1,6 @@
 #pragma once
+#include <Windows.h> // Ensure this is first
 #include <string>
-#include <Windows.h> // For MessageBox
 #include <sstream>   // For wostringstream
 #include <exception> // For std::exception
 
