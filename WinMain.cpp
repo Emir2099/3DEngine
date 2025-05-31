@@ -63,6 +63,12 @@ int CALLBACK WinMain(
                     // or you might clear the specific key state in the Keyboard object here if KeyIsPressed is a continuous state check
                     // and you only want the message box once per press-hold cycle.
                 }
+
+                // Test case for alt key handling 
+                // if( wnd.kbd.KeyIsPressed( VK_MENU ) )
+			    // {
+				//     MessageBox( nullptr,L"Something Happon!",L"The alt key was pressed",MB_OK | MB_ICONEXCLAMATION );
+			    // }
             }
         }
         

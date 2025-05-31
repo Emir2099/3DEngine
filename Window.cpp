@@ -94,16 +94,18 @@ LRESULT Window::HandleMessage(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
             PostQuitMessage(0);
             return 0;
         
-        // Test: Change window title on F key press and release
         case WM_KEYDOWN:
+            if( !(lParam & 0x40000000) || kbd.AutorepeatIsEnabled())   // filter autorepeat
+            {
             // Pass key events to the Keyboard class
             if (wParam < 256) { // Ensure wParam is a valid key code
                 kbd.OnKeyPressed(static_cast<unsigned char>(wParam));
             }
-            // Test: Change window title on F key press
-            if (wParam == 'F') { // Check if the F key was pressed
-                SetWindowTextW(hWnd, L"F Key Pressed"); // Set new window title (Unicode)
             }
+            // Test: Change window title on F key press
+            // if (wParam == 'F') { // Check if the F key was pressed
+            //     SetWindowTextW(hWnd, L"F Key Pressed"); // Set new window title (Unicode)
+            // }
             break; 
 
         case WM_KEYUP:
@@ -117,6 +119,20 @@ LRESULT Window::HandleMessage(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
             }
             break; 
 
+        case WM_SYSKEYDOWN:
+            // Handle system key down events (e.g., Alt key)
+            if (wParam < 256) { // Ensure wParam is a valid key code
+                kbd.OnKeyPressed(static_cast<unsigned char>(wParam));
+            }
+            break;
+
+        case WM_SYSKEYUP:
+            // Handle system key up events (e.g., Alt key)
+            if (wParam < 256) { // Ensure wParam is a valid key code
+                kbd.OnKeyReleased(static_cast<unsigned char>(wParam));
+            }
+            break;
+                
         case WM_CHAR:
             // Pass char events to the Keyboard class
             kbd.OnChar(static_cast<unsigned char>(wParam));
