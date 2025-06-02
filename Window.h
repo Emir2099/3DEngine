@@ -4,7 +4,7 @@
 #include <string>    // Required for std::wstring
 #include "Keyboard.h" // The Window class uses a Keyboard object
 #include "Mouse.h"    // The Window class uses a Mouse object
-
+#include "optional"
 // --- Window Class Definition ---
 // For better organization in larger projects, this class could be in Window.h and Window.cpp
 class Window {
@@ -18,7 +18,7 @@ public:
     ~Window();
 
     HWND GetHwnd() const;
-
+    static std::optional<int> ProcessMessages();
 private:
     // Static WndProc: Delegates to the instance's HandleMessage
     // This function is called by the Windows operating system to process messages for windows of this class.
