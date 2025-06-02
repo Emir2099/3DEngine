@@ -9,7 +9,7 @@ public:
 	int Go();
 private:
 	void DoFrame();
-    Timer timer; // Timer to track elapsed time
+    // Timer timer; // Timer to track elapsed time
 private:
 	Window wnd;
 };

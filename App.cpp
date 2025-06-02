@@ -42,8 +42,9 @@ int App::Go()
 
 void App::DoFrame()
 {
-	const float t = timer.Peek();
-	std::wostringstream woss; // Use wide string stream for Unicode
-	woss << L"Time elapsed: " << std::setprecision(1) << std::fixed << t << L"s";
-	SetWindowTextW(wnd.GetHwnd(), woss.str().c_str()); // Explicitly use SetWindowTextW for wide strings
+    // Test App LOOP
+	// const float t = timer.Peek();
+	// std::wostringstream woss; // Use wide string stream for Unicode
+	// woss << L"Time elapsed: " << std::setprecision(1) << std::fixed << t << L"s";
+	// SetWindowTextW(wnd.GetHwnd(), woss.str().c_str()); // Explicitly use SetWindowTextW for wide strings
 }
