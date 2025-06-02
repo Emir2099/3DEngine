@@ -5,12 +5,18 @@
 #include "Keyboard.h" // The Window class uses a Keyboard object
 #include "Mouse.h"    // The Window class uses a Mouse object
 #include "optional"
+// #include "Graphics.h" // Replaced with forward declaration below
+#include "memory"
+
+class Graphics; // Forward declaration
+
 // --- Window Class Definition ---
 // For better organization in larger projects, this class could be in Window.h and Window.cpp
 class Window {
 public:
     Keyboard kbd; // Public keyboard object 
     Mouse mouse; // Public mouse object 
+    // Graphics gfx; // Removed redundant direct member, pGfx (unique_ptr) is used instead
     // Constructor: Registers class, creates window
     Window(HINSTANCE hInstance, const std::wstring& className, const wchar_t* windowTitle, int width, int height);
     
@@ -19,6 +25,7 @@ public:
 
     HWND GetHwnd() const;
     static std::optional<int> ProcessMessages();
+    Graphics& Gfx(); 
 private:
     // Static WndProc: Delegates to the instance's HandleMessage
     // This function is called by the Windows operating system to process messages for windows of this class.
@@ -35,5 +42,6 @@ private:
     std::wstring className_; // The name of the window class, using std::wstring for easier management
     int width;
 	int height;
+    std::unique_ptr<Graphics> pGfx; // Unique pointer to Graphics object for better memory management
 };
 // --- End Window Class Definition ---

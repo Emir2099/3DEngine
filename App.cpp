@@ -1,7 +1,9 @@
 #include "App.h"
 #include <sstream>
 #include <iomanip>
+#include <cmath> // Add cmath for sin function
 #include "ExceptionHandler.h" // Include ExceptionHandler for error handling
+#include "Graphics.h" // Include Graphics for Gfx() functionality
 
 App::App()
 	:
@@ -47,4 +49,7 @@ void App::DoFrame()
 	// std::wostringstream woss; // Use wide string stream for Unicode
 	// woss << L"Time elapsed: " << std::setprecision(1) << std::fixed << t << L"s";
 	// SetWindowTextW(wnd.GetHwnd(), woss.str().c_str()); // Explicitly use SetWindowTextW for wide strings
+	const float c = sin( timer.Peek() ) / 2.0f + 0.5f;
+	wnd.Gfx().ClearBuffer( c,c,1.0f );
+	wnd.Gfx().EndFrame();
 }

@@ -3,13 +3,14 @@
 
 #include "Window.h" // Definition of the Window class
 #include "ExceptionHandler.h" // For logging exceptions (though not directly used in this file after refactor, good to keep if Window methods might throw/log)
+#include "Graphics.h" // Include Graphics class definition
 #include <sstream>      // For std::wostringstream (used in HandleMessage for LBUTTONDOWN)
 
 // --- Window Class Implementation ---
 
 // Constructor: Registers class, creates window
 Window::Window(HINSTANCE hInstance, const std::wstring& windowTitle, const wchar_t* windowClassName, int width_param, int height_param)
-    : hInstance_(hInstance), className_(windowClassName), hWnd_(nullptr), width(width_param), height(height_param) { // Initialize member variables width and height
+    : hInstance_(hInstance), className_(windowClassName), hWnd_(nullptr), width(width_param), height(height_param), pGfx(nullptr) { // Initialize all member variables including pGfx
     WNDCLASSEXW wc = {0}; 
     wc.cbSize = sizeof(WNDCLASSEXW);
     wc.style = CS_OWNDC;
@@ -49,6 +50,10 @@ Window::Window(HINSTANCE hInstance, const std::wstring& windowTitle, const wchar
 
     SetWindowTextW(hWnd_, windowTitle.c_str()); // Ensure Unicode version is called
     ShowWindow(hWnd_, SW_SHOWDEFAULT);
+    
+    // create Graphics object
+    pGfx = std::make_unique<Graphics>(hWnd_); // Create Graphics object with the window handle
+
     UpdateWindow(hWnd_);
 }
 
@@ -108,6 +113,11 @@ LRESULT CALLBACK Window::StaticWndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARA
     } else {
         return DefWindowProcW(hWnd, msg, wParam, lParam); // Use DefWindowProcW
     }
+}
+
+Graphics& Window::Gfx()
+{
+    return *pGfx; // Return the Graphics object
 }
 
 LRESULT Window::HandleMessage(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) { // Corrected to HandleMessage

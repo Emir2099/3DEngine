@@ -12,4 +12,5 @@ private:
     // Timer timer; // Timer to track elapsed time
 private:
 	Window wnd;
+	Timer timer;
 };
